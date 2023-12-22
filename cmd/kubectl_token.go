@@ -16,6 +16,7 @@ import (
 	"net/http"
 	url2 "net/url"
 	"os"
+	"os/exec"
 	"os/signal"
 	"strings"
 	"time"
@@ -418,7 +419,12 @@ func samlAuth(input *LoginInput, tlsConfig *tls.Config) (managementClient.Token,
 	loginRequest := fmt.Sprintf("%s/login?requestId=%s&publicKey=%s&responseType=%s",
 		input.server, id, encodedKey, responseType)
 
-	customPrint(fmt.Sprintf("\nLogin to Rancher Server at %s \n", loginRequest))
+	cmd := exec.Command("open", loginRequest)
+	if err := cmd.Run(); err != nil {
+		customPrint(fmt.Sprintf("Open browser failed, Login to Rancher Server at %s", loginRequest))
+	} else {
+		customPrint(fmt.Sprintf("Wait for browser login"))
+	}
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
