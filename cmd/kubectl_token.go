@@ -419,7 +419,7 @@ func samlAuth(input *LoginInput, tlsConfig *tls.Config) (managementClient.Token,
 	loginRequest := fmt.Sprintf("%s/login?requestId=%s&publicKey=%s&responseType=%s",
 		input.server, id, encodedKey, responseType)
 
-	cmd := exec.Command("open", loginRequest)
+	cmd := exec.Command("open", "-g", loginRequest)
 	if err := cmd.Run(); err != nil {
 		customPrint(fmt.Sprintf("Open browser failed, Login to Rancher Server at %s", loginRequest))
 	} else {
