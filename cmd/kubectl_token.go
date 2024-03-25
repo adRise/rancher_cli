@@ -410,8 +410,15 @@ func samlAuth(input *LoginInput, tlsConfig *tls.Config) (managementClient.Token,
 	req.Header.Set("content-type", "application/json")
 	req.Header.Set("accept", "application/json")
 
+	var proxyUrl *url2.URL = nil
+	if proxy := os.Getenv("HTTP_PROXY"); proxy != "" {
+		proxyUrl, _ = url2.Parse(proxy)
+		customPrint(fmt.Sprintf("Use proxy %s", proxyUrl))
+	}
+
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
+		Proxy: http.ProxyURL(proxyUrl),
 	}
 
 	client := &http.Client{Transport: tr, Timeout: 300 * time.Second}
